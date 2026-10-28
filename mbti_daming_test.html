@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>大明王朝1566 MBTI 人物测试</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", sans-serif;
+    background: linear-gradient(135deg, #fef3e2 0%, #fce4d6 50%, #e8f4f8 100%);
+    min-height: 100vh;
+    padding: 20px;
+    color: #3d3d3d;
+  }
+  .container {
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  .card {
+    background: rgba(255,255,255,0.75);
+    backdrop-filter: blur(12px);
+    border-radius: 20px;
+    padding: 28px 24px;
+    margin-bottom: 16px;
+    box-shadow: 0 8px 24px rgba(120,80,40,0.08);
+    border: 1px solid rgba(255,255,255,0.5);
+    transition: transform .25s ease, opacity .25s ease;
+  }
+  .title {
+    text-align: center;
+    font-size: 22px;
+    font-weight: 700;
+    color: #5a3e28;
+    margin-bottom: 6px;
+  }
+  .subtitle {
+    text-align: center;
+    font-size: 13px;
+    color: #8b6f5c;
+    margin-bottom: 18px;
+  }
+  .progress {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 14px;
+  }
+  .dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: #e3d2c4;
+    transition: all .3s ease;
+  }
+  .dot.active { background: #d4845c; transform: scale(1.15); }
+  .dot.done { background: #a8c4a2; }
+  .question {
+    font-size: 16px;
+    font-weight: 600;
+    color: #4a3728;
+    margin-bottom: 16px;
+    text-align: center;
+    line-height: 1.6;
+  }
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option {
+    background: rgba(255,255,255,0.85);
+    border: 2px solid #e6d5c3;
+    border-radius: 14px;
+    padding: 14px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    text-align: left;
+    transition: all .2s ease;
+    color: #4a3728;
+    line-height: 1.5;
+  }
+  .option:hover {
+    border-color: #d4845c;
+    background: #fff6ef;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(180,120,80,0.12);
+  }
+  .btn {
+    display: block;
+    width: 100%;
+    max-width: 280px;
+    margin: 22px auto 0;
+    padding: 14px;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #d4845c, #c06a48);
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(180,100,60,0.25);
+    transition: all .2s ease;
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(180,100,60,0.3); }
+  .result-card {
+    text-align: center;
+  }
+  .character-name {
+    font-size: 26px;
+    font-weight: 800;
+    color: #b85c38;
+    margin: 10px 0 4px;
+  }
+  .mbti-type {
+    display: inline-block;
+    background: #f3e7d9;
+    color: #8b5a3c;
+    padding: 4px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+  }
+  .quote {
+    font-size: 13px;
+    color: #8b6f5c;
+    font-style: italic;
+    margin-bottom: 12px;
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.6);
+    border-radius: 12px;
+    border-left: 3px solid #d4845c;
+    text-align: left;
+  }
+  .analysis {
+    font-size: 14px;
+    line-height: 1.8;
+    color: #4a3728;
+    text-align: left;
+    margin-top: 8px;
+  }
+  .analysis strong { color: #b85c38; }
+  .hidden { display: none !important; }
+  .fade-in { animation: fadeIn .5s ease forwards; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  @media (max-width: 480px) {
+    .card { padding: 20px 16px; }
+    .title { font-size: 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="card" id="startCard">
+    <div class="title">🏮 大明王朝1566 MBTI 人物测试</div>
+    <div class="subtitle">28 道情景题 · 测出你是剧中哪位人物</div>
+    <div style="text-align:center;margin-top:14px;">
+      <p style="font-size:13px;color:#7a6555;line-height:1.7;">
+        基于《大明王朝1566》的历史情境，结合现代生活场景，<br>
+        以 MBTI 思路分析人物性格。每道题选最符合你的选项，<br>
+        最后将揭晓你的「大明人格」。
+      </p>
+      <button class="btn" onclick="startTest()">开始测试</button>
+    </div>
+  </div>
+
+  <div class="card hidden" id="quizCard">
+    <div class="progress" id="progress"></div>
+    <div class="question" id="question"></div>
+    <div class="options" id="options"></div>
+  </div>
+
+  <div class="card hidden result-card" id="resultCard">
+    <div class="title">你的大明人格是</div>
+    <div class="character-name" id="charName"></div>
+    <div class="mbti-type" id="mbtiType"></div>
+    <div class="quote" id="quote"></div>
+    <div class="analysis" id="analysis"></div>
+    <button class="btn" onclick="restart()">重新测试</button>
+  </div>
+</div>
+
+<script>
+const questions = [
+  // E/I
+  { q: "1. 周末到了，你更想：", a: ["和朋友出门聚会", "在家独处看书"], dim: "EI" },
+  { q: "2. 面对一场重要谈判，你通常：", a: ["主动发言，掌控节奏", "先观察再找时机"], dim: "EI" },
+  { q: "3. 在 crowded 的场合，你的能量：", a: ["被激发，如鱼得水", "容易消耗，想找安静角落"], dim: "EI" },
+  { q: "4. 遇到棘手问题，你第一反应是：", a: ["找人讨论，集思广益", "先自己思考，沉淀方案"], dim: "EI" },
+  { q: "5. 在团队里，你通常是：", a: ["发言积极的那一个", "支持、协调、推一把的人"], dim: "EI" },
+  { q: "6. 接到突发任务，你的状态是：", a: ["立刻动身，边做边调整", "先冷静分析，再行动"], dim: "EI" },
+  { q: "7. 你更欣赏哪种领导风格？", a: ["开明、活跃、能说会道", "沉稳、威严、不怒自威"], dim: "EI" },
+
+  // S/N
+  { q: "8. 上司给了一个模糊指令，你会：", a: ["追问细节，锁定执行", "自己补充假设，先推进"], dim: "SN" },
+  { q: "9. 面对复杂局面，你更依赖：", a: ["过往经验、既有流程", "直觉洞察、长远推演"], dim: "SN" },
+  { q: "10. 在讨论中，你更在意：", a: ["具体数字、可落地方案", "背后的逻辑、潜在趋势"], dim: "SN" },
+  { q: "11. 做决定时，你更看重：", a: ["眼前可验证的事实", "未来的可能性"], dim: "SN" },
+  { q: "12. 看历史剧时，你更喜欢：", a: ["还原服化道、历史细节", "提炼人物隐喻、哲学思考"], dim: "SN" },
+  { q: "13. 同事用比喻描述工作问题，你会：", a: ["要具体例子", "立刻理解隐喻"], dim: "SN" },
+  { q: "14. 你认为好的策略是：", a: ["步骤清晰、可复制", "灵活应变、因势利导"], dim: "SN" },
+
+  // T/F
+  { q: "15. 团队里有人情绪低落，你会：", a: ["优先解决工作问题", "先关心情绪，再谈工作"], dim: "TF" },
+  { q: "16. 批评下属时，你倾向于：", a: ["直说问题，对事不对人", "委婉表达，维护关系"], dim: "TF" },
+  { q: "17. 做决策时，你更优先考虑：", a: ["逻辑、效率、公平", "人情、和谐、感受"], dim: "TF" },
+  { q: "18. 一个项目的成败，你认为关键是：", a: ["资源、流程、策略", "团队士气、领导者魅力"], dim: "TF" },
+  { q: "19. 朋友做错了事，你会：", a: ["帮他分析错在哪里", "先安慰，再慢慢说"], dim: "TF" },
+  { q: "20. 面对道德困境，你的准则：", a: ["规则和事实为准", "良知和同理心优先"], dim: "TF" },
+  { q: "21. 开会争论时，你更在意：", a: ["谁有道理", "大家是否接受"], dim: "TF" },
+
+  // J/P
+  { q: "22. 你喜欢的日程安排是：", a: ["提前规划，按表执行", "留有余地，灵活调整"], dim: "JP" },
+  { q: "23. 旅行前，你会：", a: ["详细做攻略，排好行程", "大致方向，随性而行"], dim: "JP" },
+  { q: "24. 工作截止日期临近，你：", a: ["提前完成，留足缓冲", "最后时刻冲刺，灵感爆发"], dim: "JP" },
+  { q: "25. 你更享受的工作方式是：", a: ["清单打勾，一件件完成", "自由探索，多点开花"], dim: "JP" },
+  { q: "26. 面对意外变化，你的反应：", a: ["有些焦虑，想尽快回到正轨", "兴奋，觉得有趣"], dim: "JP" },
+  { q: "27. 你的桌面/房间通常是：", a: ["整洁有序，有固定位置", "看似乱，自己知道在哪"], dim: "JP" },
+  { q: "28. 更吸引你的能力是：", a: ["强大的执行力、可靠", "灵活的应变、创造力"], dim: "JP" }
+];
+
+const results = {
+  INTJ: {
+    name: "海瑞",
+    mbti: "INTJ · 孤胆直臣",
+    quote: "″海刚峰，天生傲骨，不畏权贵，眼里容不得沙子。″",
+    analysis: "<strong>独立果决</strong>：你有极强的原则和道德标准，不随波逐流，认定的事会一条路走到黑。<br><strong>战略眼光</strong>：善于从全局看问题，看清本质后再出手，往往一击即中。<br><strong>孤勇偏执</strong>：在体制内容易因过于刚直而孤立，但你内心强大，宁愿独善其身也不妥协。<br><strong>现代映照</strong>：职场中是那个敢于指出问题、坚守底线的人，虽然不一定讨喜，但往往推动改变。"
+  },
+  ENTJ: {
+    name: "张居正",
+    mbti: "ENTJ · 铁腕首辅",
+    quote: "″张居正，大明最后一位救时宰相，力推改革，刚愎自用。″",
+    analysis: "<strong>天生统帅</strong>：你有强烈的目标感和驱动力，擅长整合资源、制定策略并推动执行。<br><strong>高效决断</strong>：在压力下反而更冷静，迅速做出最优解，不拖泥带水。<br><strong>权威掌控</strong>：对权力结构有敏锐嗅觉，知道何时进、何时退、何时雷霆手段。<br><strong>现代映照</strong>：创业团队里往往是定方向、拿结果的领袖，效率至上，结果导向。"
+  },
+  ENTP: {
+    name: "嘉靖皇帝",
+    mbti: "ENTP · 玄学权谋家",
+    quote: "″嘉靖，修道炼丹，权术超群，把群臣玩弄于股掌之间。″",
+    analysis: "<strong>机变无穷</strong>：你极聪明，喜欢解构规则，在复杂系统中找到制胜漏洞。<br><strong>幽默戏谑</strong>：表面漫不经心，实则步步为营，擅长用反讽和伪装隐藏真实意图。<br><strong>多线程思维</strong>：同时处理多件大事，精力分散但掌控全局，让人捉摸不透。<br><strong>现代映照</strong>：办公室里最会「向上管理」的人，用最低调的方式拿最高话语权。"
+  },
+  INFJ: {
+    name: "胡宗宪",
+    mbti: "INFJ · 德才名臣",
+    quote: "″胡汝贞，内圣外王，以一人之力，在夹缝中守护苍生。″",
+    analysis: "<strong>深邃洞察</strong>：你有着罕见的共情力和洞察力，能看懂人心背后的无奈与挣扎。<br><strong>理想担当</strong>：有强烈的使命感和责任感，明知不可为而为之。<br><strong>隐忍智慧</strong>：不张扬但极有手腕，用柔软的方式化解刚硬矛盾，以退为进。<br><strong>现代映照</strong>：团队里的「定海神针」，默默扛事，是大家信任但未必了解的人。"
+  },
+  INTP: {
+    name: "高拱",
+    mbti: "INTP · 刚直学士",
+    quote: "″高肃卿，才高八斗，性格刚直，朝堂上不吐不快。″",
+    analysis: "<strong>逻辑至上</strong>：你重视原理和系统，习惯拆解问题，找出最优解。<br><strong>真性情</strong>>：不圆滑、不妥协，想到什么说什么，有时会因此得罪人。<br><strong>学术气质</strong>：对知识有强烈好奇，对权力游戏未必擅长但看得清。<br><strong>现代映照</strong>：技术团队里的意见领袖，专业硬核，有时被认为「情商不够」，但没人能否认你的价值。"
+  },
+  INFP: {
+    name: "杨继盛",
+    mbti: "INFP · 刚烈谏臣",
+    quote: "″杨椒山，死劾严嵩，弹劾敢言，虽九死其犹未悔。″",
+    analysis: "<strong>理想主义</strong>：你内心有不可动摇的价值观，坚守良知，哪怕粉身碎骨。<br><strong>敏感坚韧</strong>：外表温和，内心却极其刚强，关键时刻敢于掀桌。<br><strong>纯粹性</strong>：厌恶虚伪和权谋，喜欢直来直去，偶尔显得不合群。<br><strong>现代映照</strong>：那个敢在全员邮件里实名反对方案的人，虽然会被说「太理想化」，但时代需要你。"
+  },
+  ENFJ: {
+    name: "李妃",
+    mbti: "ENFJ · 聪慧贤内助",
+    quote: "″李妃，聪慧过人，有政治眼光，是背后默默出谋划策的人。″",
+    analysis: "<strong>天然领袖</strong>：你擅长激发他人潜力，协调各方，是团队的凝聚力来源。<br><strong>敏锐洞察</strong>：对人性的理解远超表面，懂得在适当的时候说适当的话。<br><strong>柔中带刚</strong>：外显温和，内心有主见和野心，懂得借势而上。<br><strong>现代映照</strong>：最被低估的那个「幕后军师」，其实大局观比谁都强，是真正的隐形CEO。"
+  },
+  ISFJ: {
+    name: "吕芳",
+    mbti: "ISFJ · 忠厚总管",
+    quote: "″吕芳，嘉靖身边的大伴，忠厚谨慎，知道什么该说什么不该说。″",
+    analysis: "<strong>尽责守护</strong>：你务实可靠，是组织里最值得信赖的执行者，默默守护稳定运转。<br><strong>察言观色</strong>：对情绪和权力动态非常敏感，知道何时进退、如何平衡。<br><strong>低调可靠</strong>：不抢功，不惹事，但在关键时刻从不缺席。<br><strong>现代映照</strong>：运营/行政里的定海神针，老板最信任的「自己人」。"
+  },
+  ESFJ: {
+    name: "严嵩",
+    mbti: "ESFJ · 权臣老辣",
+    quote: "″严嵩，权倾朝野二十载，善于钻营，依附皇权而屹立不倒。″",
+    analysis: "<strong>实用主义</strong>：你深谙人情世故，擅长在现有体系中最大化自身利益。<br><strong>资源整合</strong>：善于拉拢人心、建立派系，把关系网经营得密不透风。<br><strong>情商高超</strong>：对上揣摩圣意，对下恩威并施，游刃有余于复杂人际。<br><strong>现代映照</strong>：职场里的「政治高手」，懂得在规则中生存并壮大，但别忘了底线。"
+  },
+  ISTJ: {
+    name: "朱七",
+    mbti: "ISTJ · 刚直侍卫",
+    quote: "″朱七，锦衣卫百户，刚直不阿，讲原则，执行力极强。″",
+    analysis: "<strong>纪律严明</strong>：你遵守规则、重视承诺，是团队中最靠得住的基础。<br><strong>坚韧务实</strong>：不怕苦不怕累，稳扎稳打，是执行层的顶尖力量。<br><strong>刚正不阿</strong>：对是非黑白有明确标准，容不得灰色地带。<br><strong>现代映照</strong>：合规/风控/安保里的硬核执行者，公司的规则守护神。"
+  },
+  ESTJ: {
+    name: "赵贞吉",
+    mbti: "ESTJ · 功利名臣",
+    quote: "″赵贞吉，官场老手，会做官、能做事，深谙体制生存之道。″",
+    analysis: "<strong>结果导向</strong>：你重视效率和成果，在体制内如鱼得水，把规则玩得明白。<br><strong>果断坚决</strong>：做事雷厉风行，不拖泥带水，擅长在压力下完成任务。<br><strong>实用主义</strong>：讲求「先解决眼下」，不太纠结情怀。<br><strong>现代映照</strong>：大厂里的中高层管理者，职场智慧拉满，是典型的「会混」又「能扛」的人。"
+  },
+  ESTP: {
+    name: "杨金水",
+    mbti: "ESTP · 精明太监",
+    quote: "″杨金水，江南织造局总管，机变百出，在权谋中游刃有余。″",
+    analysis: "<strong>灵活应变</strong>：你反应极快，擅长随机应变，在混乱中反而找到机会。<br><strong>实战派</strong>：不空谈，重实际，解决问题讲究效果和速度。<br><strong>敢于冒险</strong>：在高压环境中反而更兴奋，喜欢挑战和博弈。<br><strong>现代映照</strong>：销售/BD/危机公关里的王牌，越乱越能出成绩。"
+  },
+  ENFP: {
+    name: "王用汲",
+    mbti: "ENFP · 理想清流",
+    quote: "″王用汲，清流言官，心怀天下，敢言直谏，富有同情心。″",
+    analysis: "<strong>理想热忱</strong>：你内心有火，相信更好的世界，愿意为信念发声。<br><strong>共情力强</strong>：能深刻理解他人疾苦，做事有温度，不冷血。<br><strong>创意表达</strong>：善于用语言和行动感召人，是团队里的「气氛组」和「良心」。<br><strong>现代映照</strong>：公益/教育/媒体里最有感染力的人，虽然有时天真，但正是这种天真推动进步。"
+  }
+};
+
+let scores = { EI:0, SN:0, TF:0, JP:0 };
+let current = 0;
+
+function startTest() {
+  document.getElementById('startCard').classList.add('hidden');
+  document.getElementById('quizCard').classList.remove('hidden');
+  renderProgress();
+  showQuestion();
+}
+
+function renderProgress() {
+  const wrap = document.getElementById('progress');
+  wrap.innerHTML = '';
+  for (let i=0;i<questions.length;i++) {
+    const d = document.createElement('div');
+    d.className = 'dot';
+    if (i < current) d.className += ' done';
+    else if (i === current) d.className += ' active';
+    wrap.appendChild(d);
+  }
+}
+
+function showQuestion() {
+  const q = questions[current];
+  document.getElementById('question').textContent = q.q;
+  const wrap = document.getElementById('options');
+  wrap.innerHTML = '';
+  q.a.forEach((txt, idx) => {
+    const btn = document.createElement('div');
+    btn.className = 'option fade-in';
+    btn.textContent = txt;
+    btn.onclick = () => select(idx);
+    wrap.appendChild(btn);
+  });
+  renderProgress();
+}
+
+function select(idx) {
+  const dim = questions[current].dim;
+  if (dim === 'EI') scores.EI += (idx===0?1:-1);
+  if (dim === 'SN') scores.SN += (idx===0?1:-1);
+  if (dim === 'TF') scores.TF += (idx===0?1:-1);
+  if (dim === 'JP') scores.JP += (idx===0?1:-1);
+  current++;
+  if (current >= questions.length) showResult();
+  else showQuestion();
+}
+
+function getType() {
+  const e = scores.EI >= 0 ? 'E' : 'I';
+  const s = scores.SN >= 0 ? 'S' : 'N';
+  const t = scores.TF >= 0 ? 'T' : 'F';
+  const j = scores.JP >= 0 ? 'J' : 'P';
+  return e+s+t+j;
+}
+
+function showResult() {
+  const type = getType();
+  const r = results[type] || results['INFJ'];
+  document.getElementById('quizCard').classList.add('hidden');
+  const card = document.getElementById('resultCard');
+  card.classList.remove('hidden');
+  document.getElementById('charName').textContent = r.name;
+  document.getElementById('mbtiType').textContent = r.mbti;
+  document.getElementById('quote').textContent = r.quote;
+  document.getElementById('analysis').innerHTML = r.analysis;
+}
+
+function restart() {
+  scores = { EI:0, SN:0, TF:0, JP:0 };
+  current = 0;
+  document.getElementById('resultCard').classList.add('hidden');
+  document.getElementById('startCard').classList.remove('hidden');
+}
+</script>
+</body>
+</html>
